@@ -1,12 +1,12 @@
 /**
- * アクセスログ基本部分
+ * アクセスロガー
+ * Jqueryなどの外部ライブラリに依存しないロギング処理です。
  */
 class AccessLoggerItems {
 	private thisUserAgent:String;
 	private thisURL:String;
 	private thisUser:String;
 	private thisIPAddress:String;
-	private thisTargetDOM:any;
 	private thisAction:String;
 
 	constructor() {
@@ -14,18 +14,19 @@ class AccessLoggerItems {
 		this.thisURL = window.location.href;
 		this.thisUser = "";
 		this.thisIPAddress = "";
-		this.thisTargetDOM = "";
 		this.thisAction = "";
 	}
 	/*実際に仕込むアクション処理*/
-	public SendAction() {
-		alert("aaa");
+	public SendAction(dom:any) {
+		return function(ev) {
+			alert("@:" + ev);
+		}
 	}
 }
 
 /**
- * アクセスログ仕込み用
- *  document.getElementByTagNameがFireFoxでは正常に動かない
+ * アクセスログをinput type="button"に仕込む
+ *  Chrome、IE10、FireFoxで動作確認
  */
 class AccessLogger extends AccessLoggerItems {
 	/*読み込んだページのinput type="button"のクリックにアクセスロガーを設定*/
@@ -37,7 +38,7 @@ class AccessLogger extends AccessLoggerItems {
 			/*対象属性の要素の指定のtypeを洗い出し*/
 			if (ButtonTags[i].type.toString()  == "button" ) {
 				targetObj = document.getElementById(ButtonTags[i].id.toString());
-				targetObj.addEventListener("click", super.SendAction, true);
+				targetObj.addEventListener("click", super.SendAction(targetObj), true);
 			}
 		}
 	}
