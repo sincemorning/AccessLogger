@@ -1,9 +1,28 @@
 /**
  * アクセスロガー
  * Jqueryなどの外部ライブラリに依存しないロギング処理です。
- * idかnameでDOMを認識して取得するので、両方が設定されていない場合は取得できません
+ * idでDOMを認識して取得するので、両方が設定されていない場合は取得できません
+ * インスタンス化の際にonloadのアクションでログを送信
  */
 class AccessLoggerItems {
+	/* ページのURL */
+	private pageUrl:string;
+	/* ページのユーザーエージェント */
+	private pageNavi:string;
+	/* ページのユーザーID（取れるの？） */
+	private pageUser:string;
+	/**
+	 * コンストラクタ。
+	 * 静的な情報はここで設定
+	 */
+	constructor() {
+  		AccessLoggerItems.prototype.pageUrl = window.location.href;
+  		AccessLoggerItems.prototype.pageNavi = window.navigator.userAgent;
+		AccessLoggerItems.prototype.pageUser = "";
+  		/*読み込んだ事を送信*/
+  		AccessLoggerItems.prototype.SendLog("PageOnload");
+ 	}
+
 	/**
 	 * 単純なアクセスログ送信
 	 * 第一引数：呼び元の発生文字列
@@ -14,8 +33,8 @@ class AccessLoggerItems {
 				コールバックなので、このメソッド内でのthisはこれを呼び出したオブジェクトの意味になるので、
 				自分自身のメンバ変数のアクセスに利用できない
 			*/
-			alert(window.location.href+ "@@" + window.navigator.userAgent.toString() + "@@" + this.id +  "@@" + ev + "@@" + act);
-			/*Ajaxでログの送信を行う*/
+			/* アクションを作ってログに書き込み */
+			AccessLoggerItems.prototype.SendLog(this.id +  "#" + ev + "#" + act);
 		}
 	}
 	/**
@@ -30,15 +49,24 @@ class AccessLoggerItems {
 				コールバックなので、このメソッド内でのthisはこれを呼び出したオブジェクトの意味になるので、
 				自分自身のメンバ変数のアクセスに利用できない
 			*/
-			alert(window.location.href+ "@@" + window.navigator.userAgent.toString() + "@@" + this.id +  "@@" + ev + "@@" + act + ":before[" + beforeValue + "] after[" + this.value + "]");
-			/*Ajaxでログの送信を行う*/
+			/* アクションを作ってログに書き込み */
+			AccessLoggerItems.prototype.SendLog(this.id +  "#" + ev + "#" + act + ":before[" + beforeValue + "] after[" + this.value + "]");
+
 		}
 	}
-
-	public GetHTMLElement (id:string, name:string) : HTMLElement{
-		var retObj:HTMLElement;
-
-		return retObj
+	/**
+	 * ログへの書き込み処理
+	 * 第一引数：ログのactに埋める文字列
+	 */
+	private SendLog(log:string)
+	{
+		alert(AccessLoggerItems.prototype.pageUrl);
+		alert(AccessLoggerItems.prototype.pageNavi);
+		alert(AccessLoggerItems.prototype.pageUser );
+		alert(log);
+		/**************************
+		ここにajaxでログ用のAPIにぶん投げる処理を書く
+		**************************/
 	}
 }
 
@@ -59,17 +87,25 @@ class AccessLogger extends AccessLoggerItems {
 			act = "";
 			if (inputTags[i].type.toString()  == "button" ) {
 				act="click";
-				targetObj.addEventListener(act, super.SendAction(act), false);
+				if(targetObj != null){
+					targetObj.addEventListener(act, super.SendAction(act), false);
+				}
 			}
 			if(inputTags[i].type.toString() == "text") {
 				act="change";
 				/*変更後の値をactに結合して送信*/
-				targetObj.addEventListener(act, super.SendActionWithValue(act ,  (<HTMLInputElement>targetObj).value), false);
+				if(targetObj != null){
+					targetObj.addEventListener(act, super.SendActionWithValue(act ,  (<HTMLInputElement>targetObj).value), false);
+				}
 			}
 /**** End ロギング処理の仕込み部分****/
 		}
 	} /*SetLoggerToInputThisPage*/
 
+	/**
+ 	* アクセスログをselectに仕込む
+ 	*  Chrome、IE10、FireFoxで動作確認
+ 	*/
 	public SetLoggerToSelectThisPage(){
 		var selectTags = document.getElementsByTagName("select");
 		var targetObj : HTMLElement;
@@ -77,24 +113,33 @@ class AccessLogger extends AccessLoggerItems {
 		for(var i = 0; i < selectTags.length; i++) {
 			targetObj = document.getElementById(selectTags[i].id.toString());
 			act = "change"
-			targetObj.addEventListener(act, super.SendAction(act), false);
+			if(targetObj != null){
+				targetObj.addEventListener(act, super.SendAction(act), false);
+			}
 		}
 	}
 
+	 /**
+ 	* アクセスログをbuttonに仕込む
+ 	*  Chrome、IE10、FireFoxで動作確認
+ 	*/
 	public SetLoggerToButtonThisPage(){
 		var buttonTags = document.getElementsByTagName("button");
 		var targetObj : HTMLElement;
 		var act:string;
 		for(var i = 0; i < buttonTags.length; i++) {
-		alert(buttonTags[i].id.toString());
 			act = "click"
-			targetObj.addEventListener(act, super.SendAction(act), false);
+			targetObj = document.getElementById(buttonTags[i].id.toString());
+			if(targetObj != null){
+				targetObj.addEventListener(act, super.SendAction(act), false);
+			}
 		}
 	}
 
 }/*class AccessLogger*/
 
-/*ボタン要素にアクセスログを仕込む*/
+
+/**** ここから↓でログの仕込みをするので、必要ない物は削除してしまえばいい ****/
 var al:AccessLogger = new AccessLogger();
 /*input要素のロガー*/
 window.addEventListener("load", al.SetLoggerToInputThisPage, false);
