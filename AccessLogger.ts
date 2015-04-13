@@ -58,15 +58,29 @@ class AccessLoggerItems {
 	 * ログへの書き込み処理
 	 * 第一引数：ログのactに埋める文字列
 	 */
-	private SendLog(log:string)
+	private SendLog(actLog:string)
 	{
-		alert(AccessLoggerItems.prototype.pageUrl);
-		alert(AccessLoggerItems.prototype.pageNavi);
-		alert(AccessLoggerItems.prototype.pageUser );
-		alert(log);
+		var req = {
+				url:AccessLoggerItems.prototype.pageUrl,
+				nav:AccessLoggerItems.prototype.pageNavi,
+				user:AccessLoggerItems.prototype.pageUser,
+				act:actLog
+		}
+
+		var json_text:string = JSON.stringify(req);
+		/*デバック用*/
+		alert(json_text);
 		/**************************
 		ここにajaxでログ用のAPIにぶん投げる処理を書く
 		**************************/
+		var request = new XMLHttpRequest();
+		request.open("POST", "webservice", true);
+		request.onreadystatechange = function () {
+    		if (request.readyState != 4 || request.status != 200){
+    			return;
+    		}
+		};
+		request.send(json_text);
 	}
 }
 
