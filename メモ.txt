@@ -1,0 +1,27 @@
+var GetRegistParam = (function () {
+	var req = {
+		val1: $("#").val(),
+		val2: $("#").val(),
+	}
+	return req;
+});
+
+
+
+/*AjaxÇ≈ëóêM*/
+$.ajax({
+	url: "hogehoge",
+	type: 'POST',
+	async: true,
+	data:JSON.stringify(GetRegistParam()),
+	contentType: 'application/json',
+	cache: false,
+	dataType: 'json',
+})
+.done(function (json) {
+	/*ìoò^ÇÃê¨î€Ç…Ç©Ç©ÇÌÇÁÇ∏èoóÕ*/
+	$("#").html("ê¨å˜Ç‚ÇÀÇÒ");
+})
+.fail(function (jqXHR, textStatus, errorThrown) {
+	$("#").html("ÇµÇ¡ÇœÇ¢Ç‚ÇÀÇÒ)";
+});
