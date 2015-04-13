@@ -5,11 +5,13 @@
  * インスタンス化の際にonloadのアクションでログを送信
  */
 class AccessLoggerItems {
-	/* ページのURL */
+	/*ログのポスト先URL*/
+	private LogSendUrl:string = "http://hogehoge/scott/tiger.html";
+	/* 表示しているページのURL */
 	private pageUrl:string;
-	/* ページのユーザーエージェント */
+	/* 表示しているページのユーザーエージェント */
 	private pageNavi:string;
-	/* ページのユーザーID（取れるの？） */
+	/* 表示しているページのユーザーID（取れるの？） */
 	private pageUser:string;
 	/**
 	 * コンストラクタ。
@@ -73,14 +75,17 @@ class AccessLoggerItems {
 		/**************************
 		ここにajaxでログ用のAPIにぶん投げる処理を書く
 		**************************/
+		/*
 		var request = new XMLHttpRequest();
-		request.open("POST", "webservice", true);
+		request.open("POST", AccessLoggerItems.prototype.LogSendUrl, true);
 		request.onreadystatechange = function () {
     		if (request.readyState != 4 || request.status != 200){
     			return;
     		}
 		};
 		request.send(json_text);
+		*/
+
 	}
 }
 
@@ -161,5 +166,3 @@ window.addEventListener("load", al.SetLoggerToInputThisPage, false);
 window.addEventListener("load", al.SetLoggerToSelectThisPage, false);
 /*button要素のロガー*/
 window.addEventListener("load", al.SetLoggerToButtonThisPage, false);
-
-
