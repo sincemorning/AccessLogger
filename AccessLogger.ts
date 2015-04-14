@@ -80,7 +80,9 @@ class AccessLoggerItems {
 		/*デバック用*/
 		alert(json_text);
 		/**************************
+		 **************************
 		ここにajaxでログ用のAPIにぶん投げる処理を書く
+		**************************
 		**************************/
 		/*
 		var request = new XMLHttpRequest();
@@ -108,7 +110,6 @@ class AccessLogger extends AccessLoggerItems {
 		var act:string;
 		/*対象属性の要素を洗い出し*/
 		for(var i = 0; i < inputTags.length; i++) {
-/**** Start ロギング処理の仕込み部分****/
 			targetObj = document.getElementById(inputTags[i].id.toString());
 			act = "";
 			if (inputTags[i].type.toString()  == "button" ) {
@@ -136,7 +137,6 @@ class AccessLogger extends AccessLoggerItems {
 					}
 				}
 			}
-/**** End ロギング処理の仕込み部分****/
 		}
 	} /*SetLoggerToInputThisPage*/
 
@@ -149,7 +149,7 @@ class AccessLogger extends AccessLoggerItems {
 		var targetObj : HTMLElement;
 		var act:string;
 		for(var i = 0; i < selectTags.length; i++) {
-			targetObj = document.getElementById(selectTags[i].id.toString());https://www.youtube.com/analytics?o=U#dt=nt,fe=16535,fr=lw-001,fs=16508;fcr=0,r=retention,rpr=d
+			targetObj = document.getElementById(selectTags[i].id.toString());
 			act = "change"
 			if(targetObj != null){
 				if(targetObj.className.indexOf(super.GetNoLogClassName()) != 0) {
