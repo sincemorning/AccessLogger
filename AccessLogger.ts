@@ -3,10 +3,17 @@
  * Jqueryなどの外部ライブラリに依存しないロギング処理です。
  * idでDOMを認識して取得するので、両方が設定されていない場合は取得できません
  * インスタンス化の際にonloadのアクションでログを送信
+ * Class指定に"NoLogger"を指定する事でログの対象外に設定できます。
  */
 class AccessLoggerItems {
+	/***** 設定部分 *****/
 	/*ログのポスト先URL*/
 	private LogSendUrl:string = "http://hogehoge/scott/tiger.html";
+	/*ログの仕込みを無視するクラス名*/
+	public GetNoLogClassName():string {
+		return "NoLogger";
+	}
+
 	/* 表示しているページのURL */
 	private pageUrl:string;
 	/* 表示しているページのユーザーエージェント */
@@ -95,7 +102,7 @@ class AccessLoggerItems {
  */
 class AccessLogger extends AccessLoggerItems {
 	/*読み込んだページのinputにアクセスロガーを設定*/
-	public SetLoggerToInputThisPage() {
+	public SetLoggerToInputThisPage():void {
 		var inputTags = document.getElementsByTagName("input");
 		var targetObj : HTMLElement;
 		var act:string;
@@ -107,14 +114,26 @@ class AccessLogger extends AccessLoggerItems {
 			if (inputTags[i].type.toString()  == "button" ) {
 				act="click";
 				if(targetObj != null){
-					targetObj.addEventListener(act, super.SendAction(act), false);
+					if(targetObj.className.indexOf(super.GetNoLogClassName()) != 0) {
+						targetObj.addEventListener(act, super.SendAction(act), false);
+					}
 				}
 			}
 			if(inputTags[i].type.toString() == "text") {
 				act="change";
 				/*変更後の値をactに結合して送信*/
 				if(targetObj != null){
-					targetObj.addEventListener(act, super.SendActionWithValue(act ,  (<HTMLInputElement>targetObj).value), false);
+					if(targetObj.className.indexOf(super.GetNoLogClassName()) != 0) {
+						targetObj.addEventListener(act, super.SendActionWithValue(act ,  (<HTMLInputElement>targetObj).value), false);
+					}
+				}
+			}
+			if (inputTags[i].type.toString()  == "submit" ) {
+				act="click";
+				if(targetObj != null){
+					if(targetObj.className.indexOf(super.GetNoLogClassName()) != 0) {
+						targetObj.addEventListener(act, super.SendAction(act), false);
+					}
 				}
 			}
 /**** End ロギング処理の仕込み部分****/
@@ -125,15 +144,17 @@ class AccessLogger extends AccessLoggerItems {
  	* アクセスログをselectに仕込む
  	*  Chrome、IE10、FireFoxで動作確認
  	*/
-	public SetLoggerToSelectThisPage(){
+	public SetLoggerToSelectThisPage():void {
 		var selectTags = document.getElementsByTagName("select");
 		var targetObj : HTMLElement;
 		var act:string;
 		for(var i = 0; i < selectTags.length; i++) {
-			targetObj = document.getElementById(selectTags[i].id.toString());
+			targetObj = document.getElementById(selectTags[i].id.toString());https://www.youtube.com/analytics?o=U#dt=nt,fe=16535,fr=lw-001,fs=16508;fcr=0,r=retention,rpr=d
 			act = "change"
 			if(targetObj != null){
-				targetObj.addEventListener(act, super.SendAction(act), false);
+				if(targetObj.className.indexOf(super.GetNoLogClassName()) != 0) {
+					targetObj.addEventListener(act, super.SendAction((<HTMLInputElement>targetObj).value), false);
+				}
 			}
 		}
 	}
@@ -142,7 +163,7 @@ class AccessLogger extends AccessLoggerItems {
  	* アクセスログをbuttonに仕込む
  	*  Chrome、IE10、FireFoxで動作確認
  	*/
-	public SetLoggerToButtonThisPage(){
+	public SetLoggerToButtonThisPage():void {
 		var buttonTags = document.getElementsByTagName("button");
 		var targetObj : HTMLElement;
 		var act:string;
@@ -150,11 +171,12 @@ class AccessLogger extends AccessLoggerItems {
 			act = "click"
 			targetObj = document.getElementById(buttonTags[i].id.toString());
 			if(targetObj != null){
-				targetObj.addEventListener(act, super.SendAction(act), false);
+				if(targetObj.className.indexOf(super.GetNoLogClassName()) != 0) {
+					targetObj.addEventListener(act, super.SendAction(act), false);
+				}
 			}
 		}
 	}
-
 }/*class AccessLogger*/
 
 
